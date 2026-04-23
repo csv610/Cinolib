@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 project(cinolib LANGUAGES CXX C)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # Set the cinolib directory for the configuration script
 set(cinolib_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 

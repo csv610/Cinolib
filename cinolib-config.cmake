@@ -13,7 +13,7 @@ target_include_directories(cinolib INTERFACE $<BUILD_INTERFACE:${cinolib_DIR}/in
 target_include_directories(cinolib INTERFACE $<BUILD_INTERFACE:${cinolib_DIR}/external/eigen>)
 
 # https://cliutils.gitlab.io/modern-cmake/chapters/features/cpp11.html
-target_compile_features(cinolib INTERFACE cxx_std_11)
+target_compile_features(cinolib INTERFACE cxx_std_17)
 
 if(MSVC)
     # suppress MSVC's unsafe warning C4996
