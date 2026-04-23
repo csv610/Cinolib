@@ -13,7 +13,7 @@ Cinolib is a comprehensive header-only library designed for researchers and engi
 
 ## Port Enhancements & Contributions
 
-This fork, managed by **Chaman Singh Verma** and implemented by **Gemini CLI**, introduces several critical infrastructure improvements designed for professional development environments and Continuous Integration (CI) workflows:
+This distribution, implemented by **Gemini CLI**, introduces several critical infrastructure improvements designed for professional development environments and Continuous Integration (CI) workflows:
 
 ### 1. Unified Root Build Architecture
 The project has been restructured with a single top-level `CMakeLists.txt`. This allows for a streamlined "single-command" build of the entire library, including all 48 original examples and the newly introduced test suite.
