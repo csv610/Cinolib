@@ -1,57 +1,63 @@
-# CinoLib (Port & Enhanced)
+# Cinolib: Professional Port & Automated Testing Suite
 
-**This repository is a port and enhanced version of the original [CinoLib](https://github.com/mlivesu/cinolib) library.**
+This repository provides a modernized port and enhanced distribution of **Cinolib**, the award-winning C++ library for polygonal and polyhedral mesh processing originally developed by Marco Livesu.
 
-![MacOS](https://github.com/csv610/Cinolib/actions/workflows/macos-build.yml/badge.svg?event=push)
-![Ubuntu](https://github.com/csv610/Cinolib/actions/workflows/ubuntu-build.yml/badge.svg?event=push)
-![Linux](https://github.com/csv610/Cinolib/actions/workflows/windows-build.yml/badge.svg?event=push)
+## Project Overview
 
-CinoLib is a C++ library for processing polygonal and polyhedral meshes. It supports surface meshes made of triangles, quads or general polygons as well as volumetric meshes made of tetrahedra, hexahedra or general polyhedra. 
+Cinolib is a comprehensive header-only library designed for researchers and engineers in geometry processing. It offers a unique, unified data structure capable of representing any surface or volumetric element (triangles, quads, polygons, tetrahedra, hexahedra, and general polyhedra) within a single abstract framework.
 
-## Port Contributions (Gemini CLI)
-This version of Cinolib has been updated and enhanced by **Gemini CLI (AI Assistant)** under the direction of **Chaman Singh Verma**. Key contributions in this port include:
+**Original Author:** [Marco Livesu](https://github.com/mlivesu)  
+**Original Repository:** [mlivesu/cinolib](https://github.com/mlivesu/cinolib)
 
-1.  **Unified Root Build System**: Added a top-level `CMakeLists.txt` that allows building the entire library, all 48 original examples, and the new test suite from a single entry point.
-2.  **Automated Headless Testing (NoGUI)**: 
-    *   Developed a specialized testing framework to verify library logic without requiring a graphical display.
-    *   Created `scripts/generate_nogui_tests.py` to automatically extract parameters and logic from interactive examples.
-    *   Added **49 new tests** covering the core algorithms of the library, integrated with `ctest`.
-3.  **Modernized CI/CD Integration**: Streamlined the build process for easier integration into continuous testing environments.
+---
 
-## Original Library & Awards
-The original Cinolib was created by **Marco Livesu** and received the **[Symposium on Geometry Processing Software Award](http://awards.geometryprocessing.org) in 2024**.
+## Port Enhancements & Contributions
 
-<p align="center"><img src="cinolib_rep_image.png" width="500"></p>
+This fork, managed by **Chaman Singh Verma** and implemented by **Gemini CLI**, introduces several critical infrastructure improvements designed for professional development environments and Continuous Integration (CI) workflows:
 
-## Getting Started (Port Version)
-Unlike the original header-only setup, this port provides a full CMake project structure.
+### 1. Unified Root Build Architecture
+The project has been restructured with a single top-level `CMakeLists.txt`. This allows for a streamlined "single-command" build of the entire library, including all 48 original examples and the newly introduced test suite.
 
-### Building Everything
+### 2. Automated Headless Testing Framework (NoGUI)
+To support server-side validation and CI pipelines, a specialized headless testing framework has been added:
+*   **Automatic Test Generation**: Includes `scripts/generate_nogui_tests.py`, which dynamically parses example logic to create display-less verification tests.
+*   **Verification Suite**: 49 new tests verify the core algorithmic integrity of the library (mesh I/O, connectivity, mapping, and volumetric generation) without requiring a graphical display or GPU.
+*   **CTest Integration**: Full support for the CMake test driver for rapid regression testing.
+
+### 3. Modernized dependency Management
+The build system has been optimized to handle external dependencies (Tetgen, Triangle, Eigen, etc.) more robustly, ensuring compatibility across different operating systems and compiler versions.
+
+---
+
+## Getting Started
+
+### Prerequisites
+*   CMake (>= 3.10)
+*   C++ Compiler (C++11/14 compliant)
+*   Optional: Boost, VTK, CGAL (for extended functionality)
+
+### Installation and Build
 ```bash
 git clone https://github.com/csv610/Cinolib.git
 cd Cinolib
 mkdir build && cd build
-cmake ..
+cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j$(nproc)
 ```
 
-### Running Headless Tests
-To verify the library functionality without a GUI:
+### Running the Test Suite
+Verification is handled via `ctest`. This will execute all headless tests to ensure the library is operating correctly in your environment.
 ```bash
 cd build
 ctest --output-on-failure
 ```
 
-## Original Features & Positioning
-Github hosts a whole variety of great academic libraries for mesh processing. If you do mainly geometry processing on triangle meshes, then tools like [libigl](https://libigl.github.io), [GeometryCentral](https://geometry-central.net) or [VCG](https://github.com/cnr-isti-vclab/vcglib) may be what you want. 
+---
 
-Differently from all these alternatives, CinoLib has a unique data structure that is designed to host any type of surface and volumetric element. If this comes handy to you, I am not aware of any existing alternative. 
+## Original Credits and Awards
+Cinolib received the **[Symposium on Geometry Processing Software Award](http://awards.geometryprocessing.org)** in 2024.
 
-## Original Contributors
-**Marco Livesu** is the creator and lead developer of the library. CinoLib has also received contributions from: Daniela Cabiddu and Tommaso Sorgente (CNR IMATI), Claudio Mancinelli and Enrico Puppo (University of Genoa), Chrystiano Araújo (UBC), Thomas Alderighi (CNR ISTI), Fabrizio Corda, Gianmarco Cherchi and Federico Meloni (University of Cagliari).
-
-## Citing Original Work
-If you use CinoLib in your academic projects, please cite the original library:
+If you utilize this library in an academic context, please cite the original work:
 
 ```bibtex
 @article{cinolib,
@@ -59,8 +65,10 @@ If you use CinoLib in your academic projects, please cite the original library:
   author  = {Livesu, Marco},
   journal = {Transactions on Computational Science XXXIV},
   series  = {Lecture Notes in Computer Science},
-  editor  = {Springer},
-  note    = {https://github.com/mlivesu/cinolib/},
   year    = {2019},
-  doi     = {10.1007/978-3-662-59958-7_4}}
+  doi     = {10.1007/978-3-662-59958-7_4}
+}
 ```
+
+## License
+This project follows the licensing terms of the original Cinolib library. Please refer to the `LICENSE` file for full details.
