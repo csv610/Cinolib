@@ -33,7 +33,7 @@ The build system has been optimized to handle external dependencies (Tetgen, Tri
 
 ### Prerequisites
 *   CMake (>= 3.10)
-*   C++ Compiler (C++17 compliant)
+*   C++ Compiler (C++20 compliant)
 *   Optional: Boost, VTK, CGAL (for extended functionality)
 
 ### Installation and Build
