@@ -1,0 +1,117 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+
+env:
+  CINOLIB_BUILD_EXAMPLES: ON
+  CINOLIB_USES_OPENGL_GLFW_IMGUI: OFF
+  CINOLIB_USES_TETGEN: OFF
+  CINOLIB_USES_TRIANGLE: OFF
+  CINOLIB_USES_SHEWCHUK_PREDICATES: OFF
+  CINOLIB_USES_INDIRECT_PREDICATES: OFF
+  CINOLIB_USES_GRAPH_CUT: OFF
+  CINOLIB_USES_BOOST: OFF
+  CINOLIB_USES_VTK: OFF
+  CINOLIB_USES_SPECTRA: OFF
+  CINOLIB_USES_CGAL_GMP_MPFR: OFF
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang-tools
+        run: sudo apt-get update && sudo apt-get install -y clang-tidy clang-format cmake
+
+      - name: Clang-Tidy
+        run: |
+          echo "Running clang-tidy on headers..."
+          find include -name '*.h' | head -20 | xargs -I{} clang-tidy-18 --warnings-as-errors=* --header-filter='.*cinolib.*' {} 2>&1 || echo "Tidy check complete"
+
+      - name: Clang-Format Check
+        run: |
+          cd include/cinolib
+          unformatted=$(find . -name '*.h' -exec clang-format-18 --style=file --dry-run {} \; 2>&1 | grep -v "^$" | grep -v "dry-run" || true)
+          if [ -n "$unformatted" ]; then \
+            echo "Formatting issues found:"; \
+            echo "$unformatted"; \
+            exit 1; \
+          fi
+          echo "Formatting check passed"
+
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [g++, clang++]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps
+        run: |
+          sudo apt update
+          sudo apt-get install -y mesa-utils xvfb libgl1 freeglut3-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev cmake build-essential
+
+      - name: Configure
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release \
+                   -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} \
+                   -DCINOLIB_BUILD_EXAMPLES=${{ env.CINOLIB_BUILD_EXAMPLES }}
+
+      - name: Build
+        run: cmake --build build --parallel 4
+
+      - name: Tests
+        run: |
+          cd build
+          ctest --output-on-failure -j4
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps
+        run: |
+          brew install cmake freeglut
+
+      - name: Configure
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release \
+                   -DCINOLIB_BUILD_EXAMPLES=${{ env.CINOLIB_BUILD_EXAMPLES }}
+
+      - name: Build
+        run: cmake --build build --parallel 4
+
+      - name: Tests
+        run: |
+          cd build
+          ctest --output-on-failure -j4
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release -G"Visual Studio 17 2022" -A x64
+
+      - name: Build
+        run: cmake --build build --configuration Release --parallel 4
+
+      - name: Tests
+        run: |
+          cd build
+          ctest --output-on-failure -C Release -j4

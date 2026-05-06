@@ -1,0 +1,49 @@
+name: Format
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+
+jobs:
+  check-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: sudo apt-get install -y clang-format-18
+
+      - name: Check formatting
+        run: |
+          cd include/cinolib
+          unformatted=$(find . -name '*.h' -exec clang-format-18 --style=google --dry-run {} \; 2>&1)
+          if echo "$unformatted" | grep -q "^.*\.h$"; then \
+            echo "Code formatting issues found:"; \
+            echo "$unformatted"; \
+            exit 1; \
+          fi
+          echo "All files are properly formatted"
+
+  apply-format:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: sudo apt-get install -y clang-format-18
+
+      - name: Format code
+        run: |
+          cd include/cinolib
+          find . -name '*.h' -exec clang-format-18 -style=google -i {} \;
+
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "style: apply clang-format"
+          title: "style: apply clang-format"
+          branch: automated-format
+          delete-branch: true

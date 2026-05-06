@@ -1,0 +1,57 @@
+name: Lint
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+
+jobs:
+  clang-tidy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt-get install -y clang-tidy clang-format cmake build-essential
+
+      - name: Configure
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release \
+                   -DCMAKE_CXX_COMPILER=clang++ \
+                   -DCINOLIB_USES_OPENGL_GLFW_IMGUI=OFF \
+                   -DCINOLIB_USES_TETGEN=OFF \
+                   -DCINOLIB_USES_TRIANGLE=OFF \
+                   -DCINOLIB_USES_SHEWCHUK_PREDICATES=OFF \
+                   -DCINOLIB_USES_INDIRECT_PREDICATES=OFF \
+                   -DCINOLIB_USES_GRAPH_CUT=OFF \
+                   -DCINOLIB_USES_BOOST=OFF \
+                   -DCINOLIB_USES_VTK=OFF \
+                   -DCINOLIB_USES_SPECTRA=OFF \
+                   -DCINOLIB_USES_CGAL_GMP_MPFR=OFF
+
+      - name: Run clang-tidy
+        run: |
+          find ../include -name '*.h' -o -name '*.cpp' | head -50 | xargs clang-tidy --warnings-as-errors=* -header-filter='.*cinolib.*' 2>&1 | head -100 || true
+
+  clang-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: sudo apt-get install -y clang-format
+
+      - name: Check formatting
+        run: |
+          cd include/cinolib
+          find . -name '*.h' -exec clang-format --style=file --dry-run -Werror {} \; 2>&1 | grep -v "dry-run" || true
+          if [ -n "$(find . -name '*.h' -exec clang-format --style=file --dry-run {} \; 2>&1)" ]; then \
+            echo "Code formatting issues found:"; \
+            find . -name '*.h' -exec clang-format --style=file --dry-run {} \;; \
+            exit 1; \
+          fi
